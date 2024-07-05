@@ -1,0 +1,10 @@
+encrypt_disk: /dev/sdb
+disk_mapper_name: "test_disk"
+disk_passphrase: "disk-test"
+
+encrypt_partition: ""
+partition_backup: /mnt/backup
+tmp_mountpoint: /mnt/tmp_point
+partition_mapper_name: "test_partition"
+partition_passphrase: "partition-test"
+partition_fstype: ext4

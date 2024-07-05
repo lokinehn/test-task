@@ -1,0 +1,9 @@
+- name: Prepare
+  include_tasks: prepare.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+
+- name: CPU configurations
+  include_tasks: configuration.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"

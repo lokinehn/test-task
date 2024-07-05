@@ -1,0 +1,16 @@
+- name: Prepare
+  include_tasks: prepare.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"
+
+- name: Disk encryption
+  include_tasks: encrypt_disk.yml
+  when: 
+    - encrypt_disk is defined and encrypt_disk != ""
+    - ansible_facts['distribution'] == "Ubuntu"
+
+- name: Partition encryption
+  include_tasks: encrypt_partition.yml
+  when: 
+    - encrypt_partition is defined and encrypt_partition != ""
+    - ansible_facts['distribution'] == "Ubuntu"

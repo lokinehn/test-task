@@ -1,0 +1,5 @@
+---
+galaxy_info:
+  role_name: network
+  author: a.tsimmerman
+  description: Role for basic network configuration

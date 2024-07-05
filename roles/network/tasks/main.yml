@@ -1,0 +1,4 @@
+- name: Rename network interface
+  include_tasks: interface.yml
+  when:
+    - ansible_facts['distribution'] == "Ubuntu"

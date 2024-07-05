@@ -1,0 +1,78 @@
+- name: Partition encryption | Gather facts about the filesystem
+  setup:
+    gather_subset:
+      - all
+  register: setup_output
+
+- name: Partition encryption | Find mount point for the target partition
+  set_fact:
+    mount_point: "{{ item.mount }}"
+  with_items: "{{ setup_output.ansible_facts.ansible_mounts }}"
+  when: item.device == encrypt_partition
+
+- name: Partition encryption | Create temporary mount directory
+  file:
+    path: "{{ tmp_mountpoint }}"
+    state: directory
+
+- name: Partition encryption | Mount partition temporary
+  mount:
+    path: "{{ tmp_mountpoint }}"
+    src: "{{ encrypt_partition }}"
+    fstype: "{{ partition_fstype }}"
+    state: mounted
+
+- name: Partition encryption | Create backup directory
+  file:
+    path: "{{ partition_backup }}"
+    state: directory
+
+- name: Partition encryption | Backup partition contents
+  command:
+    cmd: rsync -av --progress {{ tmp_mountpoint }}/ {{ partition_backup }}/
+
+- name: Partition encryption | Unmount partition
+  mount:
+    path: "{{ tmp_mountpoint }}"
+    state: unmounted
+
+- name: Partition encryption | Encrypt partition with LUKS
+  luks_device:
+    state: present
+    device: "{{ encrypt_partition }}"
+    passphrase: "{{ partition_passphrase }}"
+    name: "{{ partition_mapper_name }}"
+
+- name: Partition encryption | Open LUKS-encrypted partition
+  luks_device:
+    state: opened
+    device: "{{ encrypt_partition }}"
+    passphrase: "{{ partition_passphrase }}"
+    name: "{{ partition_mapper_name }}"
+
+- name: Partition encryption | If partition has mountpoint
+  block:
+    - name: Partition encryption | Format the LUKS-mapped partition
+      filesystem:
+        fstype: "{{ partition_fstype }}"
+        dev: "/dev/mapper/{{ partition_mapper_name }}"
+
+    - name: Partition encryption | Mount LUKS-encrypted boot partition
+      mount:
+        path: "{{ mount_point }}"
+        src: "/dev/mapper/{{ partition_mapper_name }}"
+        fstype: "{{ partition_fstype }}"
+        state: mounted
+
+    - name: Partition encryption | Restore partition contents
+      command:
+        cmd: rsync -av --progress {{ partition_backup }}/ {{ mount_point }}/
+  when: mount_point is defined and mount_point != ""
+
+- name: Clean up temporary directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ tmp_mountpoint }}"
+    - "{{ partition_backup }}"

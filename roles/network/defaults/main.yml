@@ -1,0 +1,4 @@
+interface_to_rename: 'eth0'
+interface_new_name: 'test'
+
+netplan_config_file: /etc/netplan/50-cloud-init.yaml

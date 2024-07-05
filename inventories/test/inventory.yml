@@ -1,0 +1,13 @@
+all:
+  children:
+    test:
+
+
+test:
+  hosts:
+    test-task:
+      ansible_host: 3.73.117.58
+      encrypt_disk: /dev/xvdb
+      encrypt_partition: ""
+      interface_to_rename: 'eth0'
+      interface_new_name: 'net0'

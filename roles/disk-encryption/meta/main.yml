@@ -1,0 +1,5 @@
+---
+galaxy_info:
+  role_name: disk-encryption
+  author: a.tsimmerman
+  description: Role for disk encryption operations

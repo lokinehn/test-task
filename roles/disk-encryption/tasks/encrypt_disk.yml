@@ -1,0 +1,14 @@
+---
+- name: Disk encryption | Encrypt the disk with LUKS
+  luks_device:
+    state: present
+    device: "{{ encrypt_disk }}"
+    passphrase: "{{ disk_passphrase }}"
+    name: "{{ disk_mapper_name }}"
+
+- name: Disk encryption | Open LUKS-encrypted disk
+  luks_device:
+    state: opened
+    device: "{{ encrypt_disk }}"
+    passphrase: "{{ disk_passphrase }}"
+    name: "{{ disk_mapper_name }}"

@@ -1,0 +1,6 @@
+- name: update grub
+  command: update-grub
+
+- name: show cpu
+  debug:
+    msg: "{{ cpu_info.stdout }}"

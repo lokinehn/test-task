@@ -1,0 +1,17 @@
+- name: Network | Rename interface
+  replace:
+    path: "{{ netplan_config_file }}"
+    regexp: 'set-name:\s*{{ interface_to_rename }}'
+    replace: 'set-name: {{ interface_new_name }}'
+    backup: yes
+
+- name: Network | Update netplan
+  command: sudo netplan apply -f
+
+- name: Network | Get info about renamed interface
+  shell: "ip addr show dev {{ interface_new_name }} "
+  register: if_info
+
+- name: Network | Output info about renamed interface
+  debug:
+    msg: "{{ if_info.stdout }}"

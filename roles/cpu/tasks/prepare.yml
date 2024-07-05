@@ -1,0 +1,9 @@
+---
+- name: Prepare | Install required packages
+  apt:
+    name:
+      - lshw
+      - cpufrequtils
+    state: present
+    update_cache: yes
+    

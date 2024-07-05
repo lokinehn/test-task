@@ -1,0 +1,8 @@
+---
+- name: Prepare | Install required packages
+  apt:
+    name:
+      - cryptsetup
+    state: present
+    update_cache: yes
+    
